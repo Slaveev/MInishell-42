@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dslaveev <dslaveev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/11 10:01:22 by dslaveev          #+#    #+#             */
-/*   Updated: 2024/06/15 15:35:11 by dslaveev         ###   ########.fr       */
+/*   Created: 2024/06/17 13:14:25 by dslaveev          #+#    #+#             */
+/*   Updated: 2024/06/20 12:45:03 by dslaveev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,9 @@
 # include <unistd.h>
 # include "libft/libft.h"
 # include "lexer.h"
-# include "parser.h"
+// # include "parser.h"
 # include "builtin.h"
+# include <signal.h>
 
 # define MAXARGS 10
 
@@ -36,62 +37,38 @@ enum e_cmd_types{
 	REDIR = 5
 };
 
-struct s_cmd
+typedef struct s_sig
 {
-	enum e_cmd_types	type;
-	char				*cmd;
-	char				**args;
-	struct s_cmd		*left;
-	struct s_cmd		*right;
-}						t_cmd;
+	int		sigint;
+	int		sigquit;
+	int		exstatus;
+	pid_t	pid;
+}				t_sig;
 
-struct s_exec_cmd
+typedef struct s_cmd
 {
-	enum e_cmd_types	type;
-	char				*argv[MAXARGS];
-	char				*eargv[MAXARGS];
-};
+	char			*command;
+	char			**args;
+	char			*fd_in;
+	char			*fd_out;
+	pid_t			pid;
+	int				status;
+	struct s_cmd	*next;
+}			t_cmd;
 
-struct s_pipe_cmd
-{
-	enum e_cmd_types	type;
-	struct s_cmd		*left;
-	struct s_cmd		*right;
-};
-
-struct s_list_cmd
-{
-	enum e_cmd_types	type;
-	struct s_cmd		*left;
-	struct s_cmd		*right;
-};
-
-struct s_redir_cmd
-{
-	enum e_cmd_types	type;
-	struct s_cmd		*cmd;
-	char				*start_f;
-	char				*end_f;
-	int					mode;
-	int					fd;
-};
-
-struct s_back_cmd
-{
-	enum e_cmd_types	type;
-	struct s_cmd		*cmd;
-};
-
-typedef struct s_arg
-{
-	char			*value;
-	struct s_arg	*next;
-}					t_arg;
-
+char	*expander_env(char *arg, char **env);
 void	execute_command(char *command, char **args, int out_fd);
 void	builtin_exec(char **input, char **env);
 void	print_token(t_tok *token);
-void	ft_execute(char **argv, char **envp);
+void	ft_execute(t_cmd *cmd, char **env);
+
+char	*get_cmd_path(char *cmd, char **env);
+void	free_str_array(char **array);
+void	ft_error(const char *msg, int status);
+void	ft_close_fd(int *pfd);
+
+void ft_execute(t_cmd *cmd, char **env);
+int	is_builtin(char *command);
 
 #endif
 

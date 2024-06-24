@@ -6,7 +6,7 @@
 /*   By: dslaveev <dslaveev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/17 13:14:25 by dslaveev          #+#    #+#             */
-/*   Updated: 2024/06/20 12:45:03 by dslaveev         ###   ########.fr       */
+/*   Updated: 2024/06/24 11:47:17 by dslaveev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 // # include "parser.h"
 # include "builtin.h"
 # include <signal.h>
+# include <stdbool.h>
 
 # define MAXARGS 10
 
@@ -52,23 +53,33 @@ typedef struct s_cmd
 	char			*fd_in;
 	char			*fd_out;
 	pid_t			pid;
+	bool			pipe;
 	int				status;
 	struct s_cmd	*next;
-}			t_cmd;
+}					t_cmd;
+
+typedef struct s_cmd_node
+{
+	t_cmd				*cmd;
+	struct s_cmd_node	*next;
+}						t_cmd_node;
 
 char	*expander_env(char *arg, char **env);
-void	execute_command(char *command, char **args, int out_fd);
 void	builtin_exec(char **input, char **env);
 void	print_token(t_tok *token);
-void	ft_execute(t_cmd *cmd, char **env);
+// void	ft_execute(t_cmd *cmd, char **env);
+void ft_execute(t_cmd_node *cmd_list, char **env);
+// void ft_execute(t_cmd **cmds, int num_cmds, char **env);
 
 char	*get_cmd_path(char *cmd, char **env);
 void	free_str_array(char **array);
 void	ft_error(const char *msg, int status);
 void	ft_close_fd(int *pfd);
 
-void ft_execute(t_cmd *cmd, char **env);
+// void ft_execute(t_cmd *cmd, char **env);
 int	is_builtin(char *command);
+
+void free_cmd_list(t_cmd_node *cmd_list);
 
 #endif
 

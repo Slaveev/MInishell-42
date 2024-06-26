@@ -6,7 +6,7 @@
 /*   By: dslaveev <dslaveev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 13:26:10 by dslaveev          #+#    #+#             */
-/*   Updated: 2024/06/14 16:35:43 by dslaveev         ###   ########.fr       */
+/*   Updated: 2024/06/26 13:01:02 by dslaveev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -296,9 +296,9 @@ t_tok *lexer_get_next_token(t_lexer *lexer)
 			case '(':
 				return process_token(lexer, '(', COMMAND_GROUP, 0);
 			case CHAR_QUOTE:
-				return process_token(lexer, CHAR_QUOTE, COMMAND_GROUP, 1);
+				return process_token(lexer, CHAR_QUOTE, WORD, 1);
 			case CHAR_DOUBLE_QUOTE:
-				return process_token(lexer, CHAR_DOUBLE_QUOTE, COMMAND_GROUP, 1);
+				return process_token(lexer, CHAR_DOUBLE_QUOTE, WORD, 1);
 			default:
 				if (is_string_identify(lexer->cur_char))
 					return ((token = lexer_identifier(lexer)), token);
@@ -307,7 +307,10 @@ t_tok *lexer_get_next_token(t_lexer *lexer)
 				else if (lexer->cur_char != CHAR_SPACE)
 					return ((token = lexer_token_name(lexer)), token);
 				else
+				{
+					printf("else\n");
 					lexer_advance(lexer);
+				}
 				break;
 			}
 	}
